@@ -18,6 +18,9 @@ FHIR Resources and return it as FHIR Resources.
 This application can be used via the provided web interface, with REST Api calls e.g. via Postman or with a curl 
 command.
 
+## Simulation data
+To generate data that can be used with this application: https://github.com/julsas/sofa-on-fhir
+
 ## REST API Call
 `<base_url_server>/SOFA_API/?source_p_id=<source_patient_id>&target_p_id=<target_patient_id>&source=<source_server>&target=<target_server>&auth_key=<key>&org=<organisation>&new_patient=<True>`
 
