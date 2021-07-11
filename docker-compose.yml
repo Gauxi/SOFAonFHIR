@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  sofa_on_fhir:
+    build: .
+    ports:
+      - "5000:5000"

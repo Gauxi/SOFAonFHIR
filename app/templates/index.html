@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+
+    <title>Calculate SOFA FHIR</title>
+</head>
+<body class="text-center">
+    <div class="container-fluid">
+
+        <div class="spacer-15"></div>
+        <h1>This page is a user interface to calculate the SOFA score for a patient and post it to a FHIR sever</h1>
+        <div class="spacer-45"></div>
+
+        <form action="#" method="post">
+            <p>Source Patient ID*:</p>
+            <p><input type="text" name="source_p_id" required></p>
+            <p>Target Patient ID:</p>
+            <p><input type="text" name="target_p_id"></p>
+            <p>Oganisation:</p>
+            <p><input type="text" name="org_id"></p>
+            <p>Source Server:</p>
+            <p><input type="text" name="source_server"></p>
+            <p>Target Server:</p>
+            <p><input type="text" name="target_server"></p>
+            <p>Authorization Key:</p>
+            <p><input type="text" name="auth_key"></p>
+            <p>Creating a new patient on target server?</p>
+            <p><input type="checkbox" name="new_patient_check"></p>
+            <p><input type="submit" value="Submit"></p>
+        </form>
+
+        {% if SOFA_score or status %}
+            <div class="container-fluid" id="infobox">
+                {% if SOFA_score %}
+                    {% if new_patient_id %}
+                        <p>For patient <b>{{patient_id}}</b> a new patient <b>{{new_patient_id}}</b> was created and a SOFA Score was calculated!</p>
+                    {% else %}
+                        <p>SOFA Score for patient <b>{{patient_id}}</b> was calculated!</p>
+                    {% endif %}
+                    <p>SOFA: <b>{{SOFA_score}}</b></p>
+                    <p>SOFA Subscores: </p>
+                    <p>Respiratory system: {{sub_scores['resp']}}</p>
+                    <p>Nervous system: {{sub_scores['ns']}}</p>
+                    <p>Cardiovascular system: {{sub_scores['cvs']}}</p>
+                    <p>Liver: {{sub_scores['liv']}}</p>
+                    <p>Coagulation: {{sub_scores['coa']}}</p>
+                    <p>Kidneys: {{sub_scores['kid']}}</p>
+                {% endif %}
+                {% if status %}
+                    {% if status['bundle_status'] == 200 %}
+                <p>SOFA Score was <b> successful </b> posted as bundle to target server!</p>
+                    {% elif status['obs_status'] in [200,201] and status['prod_status'] in [200,201] and status['dev_status'] in [200,201] %}
+                <p>SOFA Score was <b>successful</b>b posted to target server!</p>
+                    {% else %}
+                        <p>SOFA Score <b>could not be posted</b></p>
+                        <p> Bundle status: {{status['bundle_status']}}</p>
+                        <p> Observation resource status: {{status['obs_status']}}</p>
+                        <p> Procedure resource status: {{status['prod_status']}}</p>
+                        <p> Device resource status: {{status['dev_status']}}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
